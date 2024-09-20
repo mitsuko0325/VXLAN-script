@@ -1,0 +1,44 @@
+
+conf t
+
+interface ethernet 1/1-54
+no shut
+mtu 9216
+
+nv overlay evpn
+feature ospf
+feature bgp
+
+
+---Underlay OSPF---
+
+router ospf 100
+  router-id 9.9.9.9
+
+interface loopback0
+  ip address 9.9.9.9/32
+  ip router ospf 100 area 0.0.0.0
+  no shut
+
+interface Ethernet1/49
+  ip address 192.168.1.2/30
+  ip ospf network point-to-point
+  ip router ospf 100 area 0.0.0.0
+  no shutdown
+
+interface Ethernet1/50
+  ip address 192.168.2.2/30
+  ip ospf network point-to-point
+  ip router ospf 100 area 0.0.0.0
+  no shutdown
+
+---Control Plane MP-BGP EVPN---
+
+router bgp 65001
+  neighbor 9.9.9.9
+    remote-as 65001
+    update-source lo 0
+    address-family l2vpn evpn
+      send-community both
+
+---
