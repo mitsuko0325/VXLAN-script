@@ -90,6 +90,12 @@ interface nve 1
   member vni 11000 associate-vrf
   no shut
 
+router bgp 65001
+  vrf vxlan-11000
+      address-family ipv4 unicast
+        network 192.168.101.0/24
+  
+        #networkコマンドいるか？→ないとテーブル乗らない
 
 ---Hostとの接続設定---
 
